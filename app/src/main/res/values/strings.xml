@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Retro Camera</string>
+    <string name="no_photos_yet">No photos here yet</string>
+    <string name="tip_rotate_camera">Rotate Camera</string>
+    <string name="tip_gallery">Open Camera Roll</string>
+    <string name="tip_take_photo">Take Photo</string>
+    <string name="settings">Settings</string>
+    <string name="tip_share">Share</string>
+    <string name="tip_delete">Delete</string>
+    <string name="tip_back">Back</string>
+    <string name="tip_flash_on">Toggle flash on</string>
+    <string name="tip_flash_auto">Toggle flash auto</string>
+    <string name="tip_flash_off">Toggle flash off</string>
+</resources>
