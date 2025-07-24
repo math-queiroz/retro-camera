@@ -29,7 +29,7 @@ import jp.co.cyberagent.android.gpuimage.filter.GPUImageLookupFilter
 class MainViewModel : ViewModel() {
   private val _flashTrigger = MutableStateFlow(false)
   val flashTrigger: StateFlow<Boolean> = _flashTrigger
-  fun triggerFlash() { _flashTrigger.value = true }
+  fun TriggerBlackFlash() { _flashTrigger.value = true }
   fun flashCompleted() { _flashTrigger.value = false }
 
   private val _flashState = MutableStateFlow(ImageCapture.FLASH_MODE_OFF)
