@@ -49,7 +49,7 @@ class MainViewModel : ViewModel() {
   fun onTakePhoto(context: Context, bitmap: Bitmap): Uri? {
     var result = bitmap
     result = applyFilter(context, result)
-    result = addFilmGrain(result, 0.25f)
+    result = addFilmGrain(result)
     result = addTimestamp(context, result)
     return saveBitmapToGallery(context, result)
   }
@@ -75,7 +75,7 @@ class MainViewModel : ViewModel() {
     }
 
     val timestampRect = Rect()
-    paint.getTextBounds(timestampFormat, 0, timestampFormat.length, timestampRect);
+    paint.getTextBounds(timestampFormat, 0, timestampFormat.length, timestampRect)
 
     val baseWidth = if (isPortrait) bitmap.height else bitmap.width
     val baseHeight = if (isPortrait) bitmap.width else bitmap.height
@@ -108,8 +108,10 @@ class MainViewModel : ViewModel() {
     return result.bitmapWithFilterApplied
   }
 
-  private fun addFilmGrain(bitmap: Bitmap, grainIntensity: Float): Bitmap {
+  private fun addFilmGrain(bitmap: Bitmap): Bitmap {
     val grainScale = 3f
+    val grainIntensity = 0.25f
+
     val width = (bitmap.width / grainScale).toInt()
     val height = (bitmap.height / grainScale).toInt()
 
@@ -171,7 +173,7 @@ enum class AspectRatio(val ratio: Float, val displayName: String) {
 
   companion object {
     fun getNext(current: AspectRatio): AspectRatio {
-      val values = values()
+      val values = AspectRatio.entries.toTypedArray()
       val currentIndex = values.indexOf(current)
       return values[(currentIndex + 1) % values.size]
     }
