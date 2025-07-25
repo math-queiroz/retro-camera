@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 @Composable
 fun FlashEffect(
   triggerFlash: Boolean,
+  modifier: Modifier = Modifier,
   onFlashComplete: () -> Unit
 ) {
   val alpha = remember { Animatable(0f) }
@@ -28,8 +29,7 @@ fun FlashEffect(
 
   if (alpha.value > 0f) {
     Box(
-      modifier = Modifier
-        .fillMaxSize()
+      modifier = modifier
         .background(Color.Black.copy(alpha = alpha.value))
     )
   }

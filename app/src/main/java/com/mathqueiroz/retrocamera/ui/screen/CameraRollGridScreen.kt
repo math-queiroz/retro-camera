@@ -54,7 +54,7 @@ fun CameraRollGridScreen(navController: NavController) {
          }
 
          Text(
-           text = "Camera Roll",
+           text = getString(LocalContext.current, R.string.camera_roll),
            fontSize = 20.sp,
            modifier = Modifier
              .padding(16.dp)

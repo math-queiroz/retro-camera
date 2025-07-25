@@ -3,7 +3,7 @@
     <string name="app_name">Retro Camera</string>
     <string name="no_photos_yet">Nenhuma foto aqui ainda</string>
     <string name="tip_rotate_camera">Alterar Câmera</string>
-    <string name="tip_gallery">Abrir Rolo da Câmera</string>
+    <string name="tip_camera_roll">Abrir Rolo da Câmera</string>
     <string name="tip_take_photo">Tirar Foto</string>
     <string name="settings">Configurações</string>
     <string name="tip_share">Compartilhar</string>
@@ -12,4 +12,8 @@
     <string name="tip_flash_on">Ligar o flash</string>
     <string name="tip_flash_auto">Flash automático</string>
     <string name="tip_flash_off">Desligar o flash</string>
+    <string name="camera_roll">Rolo da Camera</string>
+    <string name="show_more">Mostrar Mais</string>
+    <string name="import_photos">Importar Fotos</string>
+    <string name="toggle_aspect_ratio">Alterar Proporção</string>
 </resources>

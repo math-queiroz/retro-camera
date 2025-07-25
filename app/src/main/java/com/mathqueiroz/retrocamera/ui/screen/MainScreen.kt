@@ -31,13 +31,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddPhotoAlternate
+import androidx.compose.material.icons.filled.AspectRatio
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.CameraRoll
-import androidx.compose.material.icons.filled.Cameraswitch
 import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.FlashAuto
 import androidx.compose.material.icons.filled.FlashOff
 import androidx.compose.material.icons.filled.FlashOn
+import androidx.compose.material.icons.filled.FlipCameraAndroid
+import androidx.compose.material.icons.filled.Grain
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -52,7 +58,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -73,11 +81,9 @@ fun MainScreen(
   navController: NavController
 ) {
   val context = LocalContext.current
+  val viewModel = viewModel<MainViewModel>()
   val activity = context.findActivity()
   activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-
-  val viewModel = viewModel<MainViewModel>()
-  val aspectRatio = 9f/16
 
   var deviceRotation by remember { mutableFloatStateOf(0f) }
   DisposableEffect(Unit) {
@@ -87,10 +93,9 @@ fun MainScreen(
 
         val newRotation = when {
           orientation >= 315 || orientation < 45 -> 0f      // Portrait
-          orientation >= 225 && orientation < 315 -> 90f   // Landscape left
-          orientation >= 135 && orientation < 225 -> 180f   // Portrait upside down
-          orientation >= 45 && orientation < 135 -> 270f     // Landscape right
-          else -> deviceRotation
+          // orientation >= 135 && orientation < 225 -> 180f   // Portrait upside down
+          orientation >= 225 -> 90f   // Landscape left
+          else -> 270f // Landscape right
         }
 
         if (newRotation != deviceRotation) {
@@ -118,6 +123,7 @@ fun MainScreen(
 
   var isCapturing by remember { mutableStateOf(false) }
 
+  val aspectRatio by viewModel.aspectRatio.collectAsStateWithLifecycle()
   val flashState by viewModel.flashState.collectAsStateWithLifecycle()
   val (flashIcon, flashDescription) = when (flashState) {
     ImageCapture.FLASH_MODE_OFF -> Icons.Default.FlashOff to getString(context, R.string.tip_flash_on)
@@ -134,7 +140,32 @@ fun MainScreen(
   }
 
   Surface {
-    Column {
+    Box(
+      modifier = Modifier
+        .fillMaxWidth()
+        .padding(0.dp, 40.dp)
+    ) {
+      CameraPreview(
+        controller = controller,
+        viewModel = viewModel,
+        modifier = Modifier
+          .align(alignment = Alignment.Center)
+          .aspectRatio(aspectRatio.ratio)
+      )
+
+      if (isCapturing) {
+        CircularProgressIndicator(
+          color = Color.White,
+          modifier = Modifier
+            .align(alignment = Alignment.Center)
+        )
+      }
+    }
+
+    Box(
+      modifier = Modifier
+        .fillMaxSize()
+    ) {
       Row (
         modifier = Modifier
           .fillMaxWidth()
@@ -142,71 +173,85 @@ fun MainScreen(
           .defaultMinSize(minHeight = 32.dp),
         horizontalArrangement = Arrangement.End,
       ) {
-
         if (cameraSelector != CameraSelector.DEFAULT_FRONT_CAMERA) {
-          RotatingIcon(
-            icon = flashIcon,
-            description = flashDescription,
-            rotation = deviceRotation,
-            size = 32.dp,
-            onClick = {
-              controller.imageCaptureFlashMode = when (controller.imageCaptureFlashMode) {
-                ImageCapture.FLASH_MODE_OFF -> ImageCapture.FLASH_MODE_ON
-                ImageCapture.FLASH_MODE_ON -> ImageCapture.FLASH_MODE_AUTO
-                else -> ImageCapture.FLASH_MODE_OFF
-              }
-              viewModel.setFlashState(controller.imageCaptureFlashMode)
-            }
-          )
+          FlashButton(flashIcon, flashDescription, deviceRotation, controller, viewModel)
         }
       }
 
-      Box(
-        modifier = Modifier.fillMaxSize()
+      Column (
+        modifier = Modifier
+          .fillMaxWidth()
+          .align(alignment = Alignment.BottomCenter),
+        horizontalAlignment = Alignment.CenterHorizontally,
       ) {
-        CameraPreview(
-          controller = controller,
-          viewModel = viewModel,
-          modifier = Modifier
-            .aspectRatio(aspectRatio)
-        )
 
-        if (isCapturing) {
-          Box(
-            modifier = Modifier
-              .fillMaxSize()
-              .background(Color.Black.copy(alpha = 0.3f)),
-            contentAlignment = Alignment.Center
-          ) {
-            CircularProgressIndicator(color = Color.White)
-          }
+        Row (
+          modifier = Modifier
+            .clip(RoundedCornerShape(100))
+            .background(Color.Black.copy(alpha = 0.2f))
+            .padding( 4.dp)
+        ) {
+          RotatingIcon(
+            icon = Icons.Default.AddPhotoAlternate,
+            description = getString(context, R.string.import_photos),
+            rotation = deviceRotation,
+            enabled = !isCapturing,
+            onClick = { }
+          )
+
+          RotatingIcon(
+            icon = Icons.Default.AspectRatio,
+            description = getString(LocalContext.current, R.string.toggle_aspect_ratio),
+            rotation = deviceRotation,
+            enabled = !isCapturing,
+            onClick = { viewModel.toggleAspectRatio() }
+          )
+
+          RotatingIcon(
+            icon = Icons.Default.Grain,
+            description = "Not Implemented",
+            rotation = deviceRotation,
+            enabled = !isCapturing,
+            onClick = { }
+          )
+
+          RotatingIcon(
+            icon = Icons.Default.CalendarMonth,
+            description = "Not Implemented",
+            rotation = deviceRotation,
+            enabled = !isCapturing,
+            onClick = { }
+          )
         }
 
         Row(
           modifier = Modifier
             .fillMaxWidth()
-            .align(Alignment.BottomCenter)
-            .padding(16.dp, 100.dp),
+            .padding(16.dp, 16.dp, 16.dp, 100.dp),
           horizontalArrangement = Arrangement.SpaceEvenly,
           verticalAlignment = Alignment.CenterVertically
         ) {
           RotatingIcon(
             icon = Icons.Default.CameraRoll,
-            description = getString(context, R.string.tip_gallery),
+            description = getString(context, R.string.tip_camera_roll),
             rotation = deviceRotation,
-            modifier = Modifier.size(70.dp),
             enabled = !isCapturing,
+            modifier = Modifier
+              .clip(shape = CircleShape)
+              .background(Color.Black.copy(alpha = 0.2f)),
             onClick = {
               navController.navigate("cameraRoll")
             }
           )
 
           IconButton(
-            modifier = Modifier.size(85.dp),
+            modifier = Modifier
+              .size(85.dp)
+              .shadow(0.dp, CircleShape),
             enabled = !isCapturing,
             onClick = {
               isCapturing = true
-              viewModel.TriggerBlackFlash()
+              viewModel.triggerBlackFlash()
               takePhoto(
                 context = context,
                 controller = controller,
@@ -223,17 +268,19 @@ fun MainScreen(
             Icon(
               imageVector = Icons.Default.Circle,
               contentDescription = getString(context, R.string.tip_take_photo),
-              modifier = Modifier.fillMaxSize()
+              modifier = Modifier
+                .fillMaxSize(),
             )
           }
 
           RotatingIcon(
-            icon = Icons.Default.Cameraswitch,
+            icon = Icons.Default.FlipCameraAndroid,
             description = getString(context, R.string.tip_rotate_camera),
             rotation = deviceRotation,
-            modifier = Modifier
-              .size(70.dp),
             enabled = !isCapturing,
+            modifier = Modifier
+              .clip(shape = CircleShape)
+              .background(Color.Black.copy(alpha = 0.2f)),
             onClick = {
               controller.cameraSelector = when (controller.cameraSelector) {
                 CameraSelector.DEFAULT_BACK_CAMERA -> CameraSelector.DEFAULT_FRONT_CAMERA
@@ -248,10 +295,28 @@ fun MainScreen(
   }
 }
 
-fun Context.findActivity(): Activity? = when (this) {
-  is Activity -> this
-  is ContextWrapper -> baseContext.findActivity()
-  else -> null
+@Composable
+fun FlashButton(
+  flashIcon: ImageVector,
+  flashDescription: String,
+  deviceRotation: Float,
+  controller: CameraController,
+  viewModel: MainViewModel
+) {
+  RotatingIcon(
+    icon = flashIcon,
+    description = flashDescription,
+    rotation = deviceRotation,
+    size = 32.dp,
+    onClick = {
+      controller.imageCaptureFlashMode = when (controller.imageCaptureFlashMode) {
+        ImageCapture.FLASH_MODE_OFF -> ImageCapture.FLASH_MODE_ON
+        ImageCapture.FLASH_MODE_ON -> ImageCapture.FLASH_MODE_AUTO
+        else -> ImageCapture.FLASH_MODE_OFF
+      }
+      viewModel.setFlashState(controller.imageCaptureFlashMode)
+    }
+  )
 }
 
 @Composable
@@ -262,7 +327,7 @@ fun RotatingIcon(
   enabled: Boolean = true,
   onClick: () -> Unit,
   modifier: Modifier = Modifier,
-  size: Dp = 48.dp,
+  size: Dp = 40.dp,
   tint: Color = Color.White
 ) {
   val animatedRotation by animateFloatAsState(
@@ -277,8 +342,9 @@ fun RotatingIcon(
   IconButton(
     onClick = onClick,
     enabled = enabled,
-    modifier = modifier
+    modifier = Modifier
       .size(size)
+      .then(modifier)
       .rotate(animatedRotation)
   ) {
     Icon(
@@ -324,4 +390,10 @@ private fun takePhoto(
       }
     }
   )
+}
+
+fun Context.findActivity(): Activity? = when (this) {
+  is Activity -> this
+  is ContextWrapper -> baseContext.findActivity()
+  else -> null
 }

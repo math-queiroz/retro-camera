@@ -29,7 +29,7 @@ import jp.co.cyberagent.android.gpuimage.filter.GPUImageLookupFilter
 class MainViewModel : ViewModel() {
   private val _flashTrigger = MutableStateFlow(false)
   val flashTrigger: StateFlow<Boolean> = _flashTrigger
-  fun TriggerBlackFlash() { _flashTrigger.value = true }
+  fun triggerBlackFlash() { _flashTrigger.value = true }
   fun flashCompleted() { _flashTrigger.value = false }
 
   private val _flashState = MutableStateFlow(ImageCapture.FLASH_MODE_OFF)
@@ -39,6 +39,12 @@ class MainViewModel : ViewModel() {
   private val _cameraSelector = MutableStateFlow(CameraSelector.DEFAULT_BACK_CAMERA)
   val cameraSelector: StateFlow<CameraSelector> = _cameraSelector
   fun setCameraSelector(state: CameraSelector) { _cameraSelector.value = state }
+
+  private val _aspectRatio = MutableStateFlow(AspectRatio.PORTRAIT_16_9)
+  val aspectRatio: StateFlow<AspectRatio> = _aspectRatio
+  fun toggleAspectRatio() {
+    _aspectRatio.value = AspectRatio.getNext(_aspectRatio.value)
+  }
 
   fun onTakePhoto(context: Context, bitmap: Bitmap): Uri? {
     var result = bitmap
@@ -155,5 +161,19 @@ class MainViewModel : ViewModel() {
     }
 
     return imageUri
+  }
+}
+
+enum class AspectRatio(val ratio: Float, val displayName: String) {
+  SQUARE(1f, "1:1"),
+  PORTRAIT_4_3(3f/4f, "3:4"),
+  PORTRAIT_16_9(9f/16f, "9:16");
+
+  companion object {
+    fun getNext(current: AspectRatio): AspectRatio {
+      val values = values()
+      val currentIndex = values.indexOf(current)
+      return values[(currentIndex + 1) % values.size]
+    }
   }
 }
