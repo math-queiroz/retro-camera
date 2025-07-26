@@ -1,4 +1,4 @@
-package com.mathqueiroz.retrocamera.ui.screen
+package com.mathqueiroz.retrocamera.ui.cameraroll
 
 import android.net.Uri
 import androidx.compose.foundation.background
@@ -26,10 +26,9 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.getString
 import androidx.navigation.NavController
 import com.mathqueiroz.retrocamera.R
-import com.mathqueiroz.retrocamera.ui.component.CameraRollGrid
 
 @Composable
-fun CameraRollGridScreen(navController: NavController) {
+fun CameraRollScreen(navController: NavController) {
   Surface {
      Column {
        Row {

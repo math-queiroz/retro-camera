@@ -1,4 +1,4 @@
-package com.mathqueiroz.retrocamera.ui.component
+package com.mathqueiroz.retrocamera.ui.main.component
 
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
@@ -16,7 +16,7 @@ import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import com.mathqueiroz.retrocamera.MainViewModel
+import com.mathqueiroz.retrocamera.ui.main.MainViewModel
 
 @Composable
 fun CameraPreview(
@@ -51,7 +51,7 @@ fun CameraPreview(
       },
     )
 
-    FlashEffect(
+    BlackFlashEffect(
       triggerFlash = flashTrigger,
       onFlashComplete = { viewModel.flashCompleted() },
       modifier = Modifier

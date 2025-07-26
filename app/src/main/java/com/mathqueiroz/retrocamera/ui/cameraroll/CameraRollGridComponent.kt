@@ -1,4 +1,4 @@
-package com.mathqueiroz.retrocamera.ui.component
+package com.mathqueiroz.retrocamera.ui.cameraroll
 
 import android.content.ContentUris
 import android.content.Context
@@ -27,7 +27,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.getString
 import coil.compose.rememberAsyncImagePainter
-import com.mathqueiroz.retrocamera.AppConstants
+import com.mathqueiroz.retrocamera.ui.main.AppConstants
 import com.mathqueiroz.retrocamera.R
 
 

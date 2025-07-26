@@ -1,4 +1,4 @@
-package com.mathqueiroz.retrocamera.ui.screen
+package com.mathqueiroz.retrocamera.ui.photopreview
 
 import android.content.Context
 import android.content.Intent

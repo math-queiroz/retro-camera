@@ -1,4 +1,4 @@
-package com.mathqueiroz.retrocamera.ui.screen
+package com.mathqueiroz.retrocamera.ui.main
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -71,9 +71,8 @@ import androidx.core.content.ContextCompat.getString
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.mathqueiroz.retrocamera.MainViewModel
 import com.mathqueiroz.retrocamera.R
-import com.mathqueiroz.retrocamera.ui.component.CameraPreview
+import com.mathqueiroz.retrocamera.ui.main.component.CameraPreview
 
 @SuppressLint("SourceLockedOrientationActivity")
 @Composable

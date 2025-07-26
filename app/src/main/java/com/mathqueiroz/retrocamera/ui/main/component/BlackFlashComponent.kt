@@ -1,4 +1,4 @@
-package com.mathqueiroz.retrocamera.ui.component
+package com.mathqueiroz.retrocamera.ui.main.component
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 
 @Composable
-fun FlashEffect(
+fun BlackFlashEffect(
   triggerFlash: Boolean,
   modifier: Modifier = Modifier,
   onFlashComplete: () -> Unit

@@ -1,4 +1,4 @@
-package com.mathqueiroz.retrocamera
+package com.mathqueiroz.retrocamera.ui.main
 
 import android.content.ContentValues
 import android.content.Context
@@ -17,6 +17,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.BitmapCompat.createScaledBitmap
 import androidx.core.graphics.createBitmap
 import androidx.lifecycle.ViewModel
+import com.mathqueiroz.retrocamera.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.text.SimpleDateFormat
@@ -25,6 +26,8 @@ import jp.co.cyberagent.android.gpuimage.GPUImage
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageFilterGroup
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageHazeFilter
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageLookupFilter
+import java.util.Date
+import java.util.Random
 
 class MainViewModel : ViewModel() {
   private val _flashTrigger = MutableStateFlow(false)
@@ -84,7 +87,7 @@ class MainViewModel : ViewModel() {
     val timestampYPos = baseHeight * 0.9f
 
     val timestamp =
-      SimpleDateFormat(timestampFormat, Locale.getDefault()).format(java.util.Date())
+      SimpleDateFormat(timestampFormat, Locale.getDefault()).format(Date())
     canvas.drawText("'$timestamp", timestampXPos, timestampYPos, paint)
 
     return result
@@ -119,7 +122,7 @@ class MainViewModel : ViewModel() {
     val noisyBitmap = createBitmap(width, height, config)
     val paint = Paint()
 
-    val random = java.util.Random()
+    val random = Random()
 
     val noisePixels = IntArray(width * height) {
       val shade = (random.nextFloat() * 255).toInt()
