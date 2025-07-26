@@ -1,10 +1,12 @@
 package com.mathqueiroz.retrocamera.ui.main
 
+import android.app.Application
 import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
+import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.Rect
 import android.net.Uri
@@ -16,20 +18,25 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.BitmapCompat.createScaledBitmap
 import androidx.core.graphics.createBitmap
-import androidx.lifecycle.ViewModel
+import androidx.exifinterface.media.ExifInterface
+import androidx.lifecycle.AndroidViewModel
 import com.mathqueiroz.retrocamera.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.text.SimpleDateFormat
 import java.util.Locale
 import jp.co.cyberagent.android.gpuimage.GPUImage
+import jp.co.cyberagent.android.gpuimage.filter.GPUImageContrastFilter
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageFilterGroup
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageHazeFilter
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageLookupFilter
 import java.util.Date
 import java.util.Random
+import kotlin.math.min
 
-class MainViewModel : ViewModel() {
+class MainViewModel(application: Application) : AndroidViewModel(application) {
+  private val prefs = application.applicationContext.getSharedPreferences("app_settings", Context.MODE_PRIVATE)
+
   private val _flashTrigger = MutableStateFlow(false)
   val flashTrigger: StateFlow<Boolean> = _flashTrigger
   fun triggerBlackFlash() { _flashTrigger.value = true }
@@ -49,15 +56,43 @@ class MainViewModel : ViewModel() {
     _aspectRatio.value = AspectRatio.getNext(_aspectRatio.value)
   }
 
-  fun onTakePhoto(context: Context, bitmap: Bitmap): Uri? {
-    var result = bitmap
+  fun onTakePhoto(context: Context, bitmap: Bitmap, exif: ExifInterface?): Uri? {
+    val renderFilmGrain = prefs.getBoolean("renderFilmGrain", false)
+    val renderTimestamp = prefs.getBoolean("renderTimestamp", true)
+
+    val exifTimestamp = exif?.getAttribute(ExifInterface.TAG_DATETIME)
+    val time = exifTimestamp?.let { date ->
+      SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.getDefault())
+        .parse(date)?.time
+    } ?: Date().time
+
+    val exifOrientation = exif?.getAttribute(ExifInterface.TAG_ORIENTATION) ?: 0
+    val orientation = when (exifOrientation) {
+      ExifInterface.ORIENTATION_ROTATE_90 -> 90f
+      ExifInterface.ORIENTATION_ROTATE_270 -> 270f
+      else -> 0f
+    }
+
+    var result = rotateBitmap(bitmap, orientation)
     result = applyFilter(context, result)
-    result = addFilmGrain(result)
-    result = addTimestamp(context, result)
+    if (renderFilmGrain) result = addFilmGrain(result)
+    if (renderTimestamp) result = addTimestamp(context, result, time)
     return saveBitmapToGallery(context, result)
   }
 
-  private fun addTimestamp(context: Context, bitmap: Bitmap): Bitmap {
+  private fun rotateBitmap(bitmap: Bitmap, rotationDegrees: Float): Bitmap {
+    val matrix = Matrix().apply { postRotate(rotationDegrees) }
+    return Bitmap.createBitmap(
+      bitmap,
+      0,0,
+      bitmap.width,
+      bitmap.height,
+      matrix,
+      true
+    )
+  }
+
+  private fun addTimestamp(context: Context, bitmap: Bitmap, time: Long): Bitmap {
     val result = bitmap.copy(Bitmap.Config.ARGB_8888, true)
     val canvas = Canvas(result)
     val timestampFormat = "yy年 M月d日"
@@ -70,10 +105,11 @@ class MainViewModel : ViewModel() {
 
     val paint = Paint().apply {
       color = Color(0xBEFCE46D).toArgb()
-      textSize = bitmap.width.toFloat() * 0.035f
+      textSize = min(bitmap.width, bitmap.height).toFloat() * 0.05f
       typeface = ResourcesCompat.getFont(context, R.font.retrocamera_dotmatrix)
-      textSkewX = -0.075f
+      textSkewX = -0.05f
       alpha = 160
+      isAntiAlias = false
       setShadowLayer(6f, 0f, 0f, Color(0xFFFFAF25).toArgb())
     }
 
@@ -83,11 +119,11 @@ class MainViewModel : ViewModel() {
     val baseWidth = if (isPortrait) bitmap.height else bitmap.width
     val baseHeight = if (isPortrait) bitmap.width else bitmap.height
 
-    val timestampXPos = baseWidth * 0.79f - timestampRect.width()
+    val timestampXPos = baseWidth * 0.805f - timestampRect.width()
     val timestampYPos = baseHeight * 0.9f
 
-    val timestamp =
-      SimpleDateFormat(timestampFormat, Locale.getDefault()).format(Date())
+    val timestamp = SimpleDateFormat(timestampFormat, Locale.getDefault())
+      .format(time)
     canvas.drawText("'$timestamp", timestampXPos, timestampYPos, paint)
 
     return result
@@ -104,16 +140,19 @@ class MainViewModel : ViewModel() {
     hazeFilter.setDistance(-0.05f)
     hazeFilter.setSlope(0.0f)
 
+    val contrastFilter = GPUImageContrastFilter()
+    contrastFilter.setContrast(1.045f)
+
     val filters = GPUImageFilterGroup(listOf(
-      lutFilter, hazeFilter
+      lutFilter, contrastFilter, hazeFilter
     ))
     result.setFilter(filters)
     return result.bitmapWithFilterApplied
   }
 
   private fun addFilmGrain(bitmap: Bitmap): Bitmap {
-    val grainScale = 3f
-    val grainIntensity = 0.25f
+    val grainScale = 1f
+    val grainIntensity = 0.35f
 
     val width = (bitmap.width / grainScale).toInt()
     val height = (bitmap.height / grainScale).toInt()
@@ -125,8 +164,12 @@ class MainViewModel : ViewModel() {
     val random = Random()
 
     val noisePixels = IntArray(width * height) {
-      val shade = (random.nextFloat() * 255).toInt()
-      Color(shade, shade, shade, (grainIntensity * 255).toInt()).toArgb()
+      Color(
+        (random.nextFloat() * 255).toInt(),
+        (random.nextFloat() * 255).toInt(),
+        (random.nextFloat() * 255).toInt(),
+        (grainIntensity * 255).toInt()
+      ).toArgb()
     }
 
     noisyBitmap.setPixels(noisePixels, 0,width, 0, 0, width, height)
@@ -169,10 +212,10 @@ class MainViewModel : ViewModel() {
   }
 }
 
-enum class AspectRatio(val ratio: Float, val displayName: String) {
-  SQUARE(1f, "1:1"),
-  PORTRAIT_4_3(3f/4f, "3:4"),
-  PORTRAIT_16_9(9f/16f, "9:16");
+enum class AspectRatio(val ratio: Float) {
+  SQUARE(1f),
+  PORTRAIT_4_3(3f/4f),
+  PORTRAIT_16_9(9f/16f);
 
   companion object {
     fun getNext(current: AspectRatio): AspectRatio {

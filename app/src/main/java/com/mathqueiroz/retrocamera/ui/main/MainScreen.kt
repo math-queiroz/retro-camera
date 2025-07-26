@@ -6,10 +6,14 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Matrix
+import androidx.exifinterface.media.ExifInterface
 import android.net.Uri
 import android.util.Log
 import android.view.OrientationEventListener
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCapture.OnImageCapturedCallback
@@ -44,9 +48,9 @@ import androidx.compose.material.icons.filled.FlashOff
 import androidx.compose.material.icons.filled.FlashOn
 import androidx.compose.material.icons.filled.FlipCameraAndroid
 import androidx.compose.material.icons.filled.Grain
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -72,7 +76,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.mathqueiroz.retrocamera.R
+import com.mathqueiroz.retrocamera.ui.settings.SettingsViewModel
 import com.mathqueiroz.retrocamera.ui.main.component.CameraPreview
+import kotlin.math.min
 
 @SuppressLint("SourceLockedOrientationActivity")
 @Composable
@@ -81,6 +87,8 @@ fun MainScreen(
 ) {
   val context = LocalContext.current
   val viewModel = viewModel<MainViewModel>()
+  val settings = viewModel<SettingsViewModel>()
+
   val activity = context.findActivity()
   activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
@@ -112,6 +120,7 @@ fun MainScreen(
     }
   }
 
+  var isCapturing by remember { mutableStateOf(false) }
   val controller = remember {
     LifecycleCameraController(context).apply {
       setEnabledUseCases(
@@ -120,9 +129,10 @@ fun MainScreen(
     }
   }
 
-  var isCapturing by remember { mutableStateOf(false) }
-
   val aspectRatio by viewModel.aspectRatio.collectAsStateWithLifecycle()
+  val renderFilmGrain by settings.renderFilmGrain.collectAsStateWithLifecycle()
+  val renderTimestamp by settings.renderTimestamp.collectAsStateWithLifecycle()
+
   val flashState by viewModel.flashState.collectAsStateWithLifecycle()
   val (flashIcon, flashDescription) = when (flashState) {
     ImageCapture.FLASH_MODE_OFF -> Icons.Default.FlashOff to getString(context, R.string.tip_flash_on)
@@ -138,11 +148,27 @@ fun MainScreen(
     controller.cameraSelector = cameraSelector
   }
 
+  val launcher = rememberLauncherForActivityResult(
+    contract = ActivityResultContracts.GetContent()
+  ) { uri ->
+    uri?.let {
+      val (bitmap, exif) = getBitmapFromUri(context, it)
+      bitmap?.let{ bitmap ->
+        viewModel.onTakePhoto(context, bitmap, exif)?.let { uri ->
+          navController.navigate(parseUriPreview(uri))
+        }
+      }
+    }
+
+  }
+
   Surface {
     Box(
       modifier = Modifier
-        .fillMaxWidth()
         .padding(0.dp, 40.dp)
+        .fillMaxWidth()
+        .aspectRatio(min(AspectRatio.PORTRAIT_4_3.ratio, aspectRatio.ratio)),
+      contentAlignment = Alignment.TopCenter
     ) {
       CameraPreview(
         controller = controller,
@@ -151,14 +177,6 @@ fun MainScreen(
           .align(alignment = Alignment.Center)
           .aspectRatio(aspectRatio.ratio)
       )
-
-      if (isCapturing) {
-        CircularProgressIndicator(
-          color = Color.White,
-          modifier = Modifier
-            .align(alignment = Alignment.Center)
-        )
-      }
     }
 
     Box(
@@ -173,7 +191,20 @@ fun MainScreen(
         horizontalArrangement = Arrangement.End,
       ) {
         if (cameraSelector != CameraSelector.DEFAULT_FRONT_CAMERA) {
-          FlashButton(flashIcon, flashDescription, deviceRotation, controller, viewModel)
+          RotatingIconButton(
+            icon = flashIcon,
+            description = flashDescription,
+            rotation = deviceRotation,
+            size = 32.dp,
+            onClick = {
+              controller.imageCaptureFlashMode = when (controller.imageCaptureFlashMode) {
+                ImageCapture.FLASH_MODE_OFF -> ImageCapture.FLASH_MODE_ON
+                ImageCapture.FLASH_MODE_ON -> ImageCapture.FLASH_MODE_AUTO
+                else -> ImageCapture.FLASH_MODE_OFF
+              }
+              viewModel.setFlashState(controller.imageCaptureFlashMode)
+            }
+          )
         }
       }
 
@@ -190,36 +221,52 @@ fun MainScreen(
             .background(Color.Black.copy(alpha = 0.2f))
             .padding( 4.dp)
         ) {
-          RotatingIcon(
+          RotatingIconButton(
             icon = Icons.Default.AddPhotoAlternate,
-            description = getString(context, R.string.import_photos),
+            description = getString(context, R.string.term_import_photos),
             rotation = deviceRotation,
             enabled = !isCapturing,
-            onClick = { }
+            onClick = {
+              launcher.launch("image/*")
+            }
           )
 
-          RotatingIcon(
+          RotatingIconButton(
             icon = Icons.Default.AspectRatio,
-            description = getString(LocalContext.current, R.string.toggle_aspect_ratio),
+            description = getString(LocalContext.current, R.string.tip_toggle_aspect_ratio),
             rotation = deviceRotation,
             enabled = !isCapturing,
-            onClick = { viewModel.toggleAspectRatio() }
+            onClick = {
+              viewModel.toggleAspectRatio()
+            }
           )
 
-          RotatingIcon(
+          RotatingIconButton(
             icon = Icons.Default.Grain,
-            description = "Not Implemented",
+            description = getString(LocalContext.current, R.string.tip_toggle_film_grain),
+            tint = (
+              if (renderFilmGrain) MaterialTheme.colorScheme.tertiary
+              else MaterialTheme.colorScheme.primary
+            ),
             rotation = deviceRotation,
             enabled = !isCapturing,
-            onClick = { }
+            onClick = {
+              settings.setRenderFilmGrain(!renderFilmGrain)
+            }
           )
 
-          RotatingIcon(
+          RotatingIconButton(
             icon = Icons.Default.CalendarMonth,
-            description = "Not Implemented",
+            description = getString(LocalContext.current, R.string.tip_toggle_timestamp),
+            tint = (
+              if (renderTimestamp) MaterialTheme.colorScheme.tertiary
+              else MaterialTheme.colorScheme.primary
+            ),
             rotation = deviceRotation,
             enabled = !isCapturing,
-            onClick = { }
+            onClick = {
+              settings.setRenderTimestamp(!renderTimestamp)
+            }
           )
         }
 
@@ -230,7 +277,7 @@ fun MainScreen(
           horizontalArrangement = Arrangement.SpaceEvenly,
           verticalAlignment = Alignment.CenterVertically
         ) {
-          RotatingIcon(
+          RotatingIconButton(
             icon = Icons.Default.CameraRoll,
             description = getString(context, R.string.tip_camera_roll),
             rotation = deviceRotation,
@@ -254,12 +301,11 @@ fun MainScreen(
               takePhoto(
                 context = context,
                 controller = controller,
+                aspectRatio = aspectRatio.ratio,
                 onPhotoTaken = { context, bitmap ->
                   isCapturing = false
-                  val uri = (viewModel::onTakePhoto)(context, bitmap)
-                  if (uri !== null) navController.navigate(
-                    "preview/${Uri.encode(uri.toString())}"
-                  )
+                  val uri = (viewModel::onTakePhoto)(context, bitmap, null)
+                  if (uri !== null) navController.navigate(parseUriPreview(uri))
                 }
               )
             }
@@ -272,7 +318,7 @@ fun MainScreen(
             )
           }
 
-          RotatingIcon(
+          RotatingIconButton(
             icon = Icons.Default.FlipCameraAndroid,
             description = getString(context, R.string.tip_rotate_camera),
             rotation = deviceRotation,
@@ -295,31 +341,7 @@ fun MainScreen(
 }
 
 @Composable
-fun FlashButton(
-  flashIcon: ImageVector,
-  flashDescription: String,
-  deviceRotation: Float,
-  controller: CameraController,
-  viewModel: MainViewModel
-) {
-  RotatingIcon(
-    icon = flashIcon,
-    description = flashDescription,
-    rotation = deviceRotation,
-    size = 32.dp,
-    onClick = {
-      controller.imageCaptureFlashMode = when (controller.imageCaptureFlashMode) {
-        ImageCapture.FLASH_MODE_OFF -> ImageCapture.FLASH_MODE_ON
-        ImageCapture.FLASH_MODE_ON -> ImageCapture.FLASH_MODE_AUTO
-        else -> ImageCapture.FLASH_MODE_OFF
-      }
-      viewModel.setFlashState(controller.imageCaptureFlashMode)
-    }
-  )
-}
-
-@Composable
-fun RotatingIcon(
+fun RotatingIconButton(
   rotation: Float,
   icon: ImageVector,
   description: String,
@@ -327,7 +349,7 @@ fun RotatingIcon(
   onClick: () -> Unit,
   modifier: Modifier = Modifier,
   size: Dp = 40.dp,
-  tint: Color = Color.White
+  tint: Color = MaterialTheme.colorScheme.primary
 ) {
   val animatedRotation by animateFloatAsState(
     targetValue = rotation,
@@ -350,13 +372,15 @@ fun RotatingIcon(
       imageVector = icon,
       contentDescription = description,
       tint = tint,
-      modifier = Modifier.size(size * 0.6f)
+      modifier = Modifier
+        .size(size * 0.6f)
     )
   }
 }
 
 private fun takePhoto(
   context: Context,
+  aspectRatio: Float,
   controller: LifecycleCameraController,
   onPhotoTaken: (Context, Bitmap) -> Unit
 ) {
@@ -380,7 +404,9 @@ private fun takePhoto(
           true
         )
 
-        onPhotoTaken(context, rotatedBitmap)
+        val croppedBitmap = cropBitmapCenter(rotatedBitmap, aspectRatio)
+
+        onPhotoTaken(context, croppedBitmap)
       }
 
       override fun onError(exception: ImageCaptureException) {
@@ -389,6 +415,38 @@ private fun takePhoto(
       }
     }
   )
+}
+
+fun cropBitmapCenter(bitmap: Bitmap, aspectRatio: Float): Bitmap {
+  val newWidth: Int
+  val newHeight: Int
+
+  if (bitmap.width / bitmap.height.toFloat() > aspectRatio) {
+    newHeight = bitmap.height
+    newWidth = (bitmap.height * aspectRatio).toInt()
+  } else {
+    newWidth = bitmap.width
+    newHeight = (bitmap.width / aspectRatio).toInt()
+  }
+
+  return Bitmap.createBitmap(bitmap,
+    (bitmap.width - newWidth) / 2,
+    (bitmap.height - newHeight) / 2,
+    newWidth, newHeight)
+}
+
+private fun getBitmapFromUri(context: Context, uri: Uri): Pair<Bitmap?, ExifInterface?> {
+  return context.contentResolver.openInputStream(uri)?.use { inputStream ->
+    val bitmap = BitmapFactory.decodeStream(inputStream)
+    context.contentResolver.openInputStream(uri)?.use { exifStream ->
+      val exif = ExifInterface(exifStream)
+      Pair(bitmap, exif)
+    } ?: Pair(bitmap, null)
+  } ?: Pair(null, null)
+}
+
+fun parseUriPreview(uri: Uri): String {
+  return "preview/${Uri.encode(uri.toString())}"
 }
 
 fun Context.findActivity(): Activity? = when (this) {

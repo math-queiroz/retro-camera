@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Retro Camera</string>
-    <string name="no_photos_yet">Nenhuma foto aqui ainda</string>
+    <string name="cameraroll_no_photos">Nenhuma foto aqui ainda</string>
     <string name="tip_rotate_camera">Alterar Câmera</string>
     <string name="tip_camera_roll">Abrir Rolo da Câmera</string>
     <string name="tip_take_photo">Tirar Foto</string>
-    <string name="settings">Configurações</string>
+    <string name="term_settings">Configurações</string>
     <string name="tip_share">Compartilhar</string>
     <string name="tip_delete">Remover</string>
     <string name="tip_back">Retornar</string>
     <string name="tip_flash_on">Ligar o flash</string>
     <string name="tip_flash_auto">Flash automático</string>
     <string name="tip_flash_off">Desligar o flash</string>
-    <string name="camera_roll">Rolo da Câmera</string>
-    <string name="show_more">Mostrar Mais</string>
-    <string name="import_photos">Importar Fotos</string>
-    <string name="toggle_aspect_ratio">Alterar Proporção</string>
+    <string name="cameraroll_title">Rolo da Câmera</string>
+    <string name="term_show_more">Mostrar Mais</string>
+    <string name="term_import_photos">Importar Fotos</string>
+    <string name="tip_toggle_aspect_ratio">Alterar Proporção</string>
     <string name="permission_request_title">Permissão necessária</string>
     <string name="permission_request_body">O acesso à câmera necessário para tirar fotos, conceda-o em Configurações.</string>
     <string name="permission_request_go_to_settings">Configurações</string>
     <string name="permission_request_dismiss">Voltar</string>
+    <string name="tip_toggle_film_grain">Alternar Ruído de Filme</string>
+    <string name="tip_toggle_timestamp">Alternar Data Impressa</string>
 </resources>

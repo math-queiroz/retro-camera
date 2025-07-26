@@ -1,22 +1,24 @@
 <resources>
     <string name="app_name">Retro Camera</string>
-    <string name="no_photos_yet">No photos here yet</string>
+    <string name="cameraroll_no_photos">No photos here yet</string>
     <string name="tip_rotate_camera">Rotate Camera</string>
     <string name="tip_camera_roll">Open Camera Roll</string>
     <string name="tip_take_photo">Take Photo</string>
-    <string name="settings">Settings</string>
+    <string name="term_settings">Settings</string>
     <string name="tip_share">Share</string>
     <string name="tip_delete">Delete</string>
     <string name="tip_back">Back</string>
     <string name="tip_flash_on">Toggle flash on</string>
     <string name="tip_flash_auto">Toggle flash auto</string>
     <string name="tip_flash_off">Toggle flash off</string>
-    <string name="camera_roll">Camera Roll</string>
-    <string name="show_more">Show More</string>
-    <string name="import_photos">Import Photos</string>
-    <string name="toggle_aspect_ratio">Toggle Aspect Ratio</string>
+    <string name="cameraroll_title">Camera Roll</string>
+    <string name="term_show_more">Show More</string>
+    <string name="term_import_photos">Import Photos</string>
+    <string name="tip_toggle_aspect_ratio">Toggle Aspect Ratio</string>
     <string name="permission_request_title">Permission Required</string>
     <string name="permission_request_body">Camera access is needed to take photos, enable it in Settings.</string>
     <string name="permission_request_go_to_settings">Settings</string>
     <string name="permission_request_dismiss">Go Back</string>
+    <string name="tip_toggle_film_grain">Toggle Film Grain</string>
+    <string name="tip_toggle_timestamp">Toggle Timestamp</string>
 </resources>

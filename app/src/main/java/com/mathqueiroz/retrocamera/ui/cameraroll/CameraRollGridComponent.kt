@@ -30,7 +30,6 @@ import coil.compose.rememberAsyncImagePainter
 import com.mathqueiroz.retrocamera.ui.main.AppConstants
 import com.mathqueiroz.retrocamera.R
 
-
 @Composable
 fun CameraRollGrid(
   onPhotoClick: (Uri) -> Unit,
@@ -48,7 +47,7 @@ fun CameraRollGrid(
       modifier = modifier.padding(16.dp),
       contentAlignment = Alignment.Center
     ) {
-      Text(getString(context, R.string.no_photos_yet))
+      Text(getString(context, R.string.cameraroll_no_photos))
     }
   } else {
     LazyVerticalGrid(

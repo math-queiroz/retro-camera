@@ -46,7 +46,7 @@ fun CameraRollScreen(navController: NavController) {
          }
 
          Text(
-           text = getString(LocalContext.current, R.string.camera_roll),
+           text = getString(LocalContext.current, R.string.cameraroll_title),
            fontSize = 20.sp,
            modifier = Modifier
              .padding(16.dp)
