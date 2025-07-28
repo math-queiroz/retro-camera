@@ -109,8 +109,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
       typeface = ResourcesCompat.getFont(context, R.font.retrocamera_dotmatrix)
       textSkewX = -0.05f
       alpha = 160
-      isAntiAlias = false
-      setShadowLayer(6f, 0f, 0f, Color(0xFFFFAF25).toArgb())
+      isAntiAlias = true
+      setShadowLayer(3f, 0f, 0f, Color(0xFFFFAF25).toArgb())
     }
 
     val timestampRect = Rect()

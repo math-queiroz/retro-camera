@@ -27,8 +27,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.getString
 import coil.compose.rememberAsyncImagePainter
-import com.mathqueiroz.retrocamera.ui.main.AppConstants
 import com.mathqueiroz.retrocamera.R
+import com.mathqueiroz.retrocamera.ui.main.AppConstants
 
 @Composable
 fun CameraRollGrid(
@@ -52,8 +52,8 @@ fun CameraRollGrid(
   } else {
     LazyVerticalGrid(
       columns = GridCells.Fixed(3),
-      verticalArrangement = Arrangement.spacedBy(4.dp),
-      horizontalArrangement = Arrangement.spacedBy(4.dp)
+      verticalArrangement = Arrangement.spacedBy(2.dp),
+      horizontalArrangement = Arrangement.spacedBy(2.dp)
     ) {
       items(imageUris) { uri ->
         Image(

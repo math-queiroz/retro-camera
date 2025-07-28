@@ -1,7 +1,9 @@
 package com.mathqueiroz.retrocamera.navigation
 
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
@@ -12,6 +14,7 @@ import androidx.navigation.navArgument
 import com.mathqueiroz.retrocamera.ui.cameraroll.CameraRollScreen
 import com.mathqueiroz.retrocamera.ui.main.MainScreen
 import com.mathqueiroz.retrocamera.ui.photopreview.PhotoPreviewScreen
+import com.mathqueiroz.retrocamera.ui.settings.SettingsScreen
 
 @Composable
 fun AppNavigation(navController: NavHostController) {
@@ -25,6 +28,13 @@ fun AppNavigation(navController: NavHostController) {
       exitTransition = { slideOutVertically(targetOffsetY = { it }, animationSpec = tween(200)) }
     ) {
       CameraRollScreen(navController)
+    }
+    composable(
+      "settings",
+      enterTransition = { slideInHorizontally(initialOffsetX = { it }, animationSpec = tween(200)) },
+      exitTransition = { slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(200)) }
+    ) {
+      SettingsScreen(navController)
     }
     composable(
       "preview/{uri}",

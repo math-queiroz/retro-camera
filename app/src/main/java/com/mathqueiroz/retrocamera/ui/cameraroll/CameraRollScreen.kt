@@ -10,48 +10,29 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.getString
 import androidx.navigation.NavController
 import com.mathqueiroz.retrocamera.R
+import com.mathqueiroz.retrocamera.ui.component.ScreenHeaderComponent
 
 @Composable
 fun CameraRollScreen(navController: NavController) {
   Surface {
      Column {
-       Row {
-         IconButton(
-           onClick = {
-             navController.popBackStack()
-           },
-           modifier = Modifier
-             .align (alignment = Alignment.CenterVertically)
-         ) {
-           Icon(
-             imageVector = Icons.Default.ArrowBack,
-             contentDescription = getString(LocalContext.current, R.string.tip_back),
-           )
-         }
-
-         Text(
-           text = getString(LocalContext.current, R.string.cameraroll_title),
-           fontSize = 20.sp,
-           modifier = Modifier
-             .padding(16.dp)
-         )
-       }
+       ScreenHeaderComponent(
+         navController,
+         getString(LocalContext.current, R.string.cameraroll_title)
+       )
 
        CameraRollGrid(
         onPhotoClick = { uri ->

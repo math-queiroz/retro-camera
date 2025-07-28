@@ -48,6 +48,7 @@ import androidx.compose.material.icons.filled.FlashOff
 import androidx.compose.material.icons.filled.FlashOn
 import androidx.compose.material.icons.filled.FlipCameraAndroid
 import androidx.compose.material.icons.filled.Grain
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -266,6 +267,16 @@ fun MainScreen(
             enabled = !isCapturing,
             onClick = {
               settings.setRenderTimestamp(!renderTimestamp)
+            }
+          )
+
+          RotatingIconButton(
+            icon = Icons.Default.Settings,
+            description = getString(LocalContext.current, R.string.term_settings),
+            rotation = deviceRotation,
+            enabled = !isCapturing,
+            onClick = {
+              navController.navigate("settings")
             }
           )
         }
