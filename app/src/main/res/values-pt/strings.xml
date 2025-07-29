@@ -33,7 +33,7 @@
     <string name="settings_privacy">Privacidade</string>
     <string name="settings_terms_of_use">Termos de Uso</string>
     <string name="share_app_subject">Compartilhar Aplicativo</string>
-    <string name="share_app_message">"Olha só esse aplicativo de câmera incrível! "</string>
+    <string name="share_app_message">Olha só esse aplicativo de câmera incrível!</string>
     <string name="warn_no_email_app">Nenhum aplicativo de email encontrado</string>
     <string name="bug_report_describe">Por favor, descreva o erro:</string>
     <string name="bug_report_device">Dispositivo</string>
