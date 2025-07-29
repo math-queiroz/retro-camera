@@ -89,6 +89,8 @@ fun MainScreen(
   val viewModel = viewModel<MainViewModel>()
   val settings = viewModel<SettingsViewModel>()
 
+  val showAssistiveGrid by settings.showAssistiveGrid.collectAsStateWithLifecycle()
+
   val activity = Util.findActivity(context)
   activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
@@ -132,6 +134,7 @@ fun MainScreen(
   val aspectRatio by viewModel.aspectRatio.collectAsStateWithLifecycle()
   val renderFilmGrain by settings.renderFilmGrain.collectAsStateWithLifecycle()
   val renderTimestamp by settings.renderTimestamp.collectAsStateWithLifecycle()
+  val shouldMirror by settings.mirrorFrontCamera.collectAsStateWithLifecycle()
 
   val flashState by viewModel.flashState.collectAsStateWithLifecycle()
   val (flashIcon, flashDescription) = when (flashState) {
@@ -171,7 +174,7 @@ fun MainScreen(
     ) {
       CameraPreview(
         controller = controller,
-        viewModel = viewModel,
+        showAssistiveGrid = showAssistiveGrid,
         modifier = Modifier
           .align(alignment = Alignment.Center)
           .aspectRatio(aspectRatio.ratio)
@@ -316,7 +319,8 @@ fun MainScreen(
                   val uri = (viewModel::onTakePhoto)(context, bitmap, null, -deviceRotation)
                   if (uri !== null) navController.navigate(parseUriPreview(uri))
                 },
-                cameraSelector = cameraSelector
+                isFrontCamera = cameraSelector == CameraSelector.DEFAULT_FRONT_CAMERA,
+                shouldMirror = shouldMirror
               )
             }
           ) {
@@ -393,7 +397,8 @@ private fun takePhoto(
   aspectRatio: Float,
   controller: LifecycleCameraController,
   onPhotoTaken: (Context, Bitmap) -> Unit,
-  cameraSelector: CameraSelector
+  isFrontCamera: Boolean,
+  shouldMirror: Boolean
 ) {
   controller.takePicture(
     ContextCompat.getMainExecutor(context),
@@ -402,9 +407,8 @@ private fun takePhoto(
         super.onCaptureSuccess(image)
 
         val matrix = Matrix().apply {
-          postRotate(
-            if (cameraSelector == CameraSelector.DEFAULT_FRONT_CAMERA) { -90f }
-            else { 90f })
+          postRotate(if (isFrontCamera) -90f else 90f)
+          postScale(if (isFrontCamera && shouldMirror) -1f else 1f, 1f)
         }
 
         val rotatedBitmap = Bitmap.createBitmap(

@@ -26,15 +26,12 @@ import com.mathqueiroz.retrocamera.ui.settings.SettingsViewModel
 fun CameraPreview(
   controller: LifecycleCameraController,
   modifier: Modifier,
-  viewModel: MainViewModel
+  showAssistiveGrid: Boolean
 ) {
   val lifecycleOwner = LocalLifecycleOwner.current
-  val settings = viewModel<SettingsViewModel>()
+  val viewModel = viewModel<MainViewModel>()
 
   val flashTrigger by viewModel.flashTrigger.collectAsStateWithLifecycle()
-  val showAssistiveGrid by settings.showAssistiveGrid.collectAsStateWithLifecycle()
-
-  LaunchedEffect(showAssistiveGrid) { }
 
   Box(
     modifier = modifier
@@ -50,14 +47,7 @@ fun CameraPreview(
       },
       modifier = modifier
         .fillMaxWidth()
-        .clip(RectangleShape),
-      update = { previewView ->
-        previewView.requestLayout()
-        previewView.invalidate()
-        previewView.post {
-          previewView.requestLayout()
-        }
-      },
+        .clip(RectangleShape)
     )
 
     BlackFlashEffect(

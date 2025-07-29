@@ -67,6 +67,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
   ): Uri? {
     val renderFilmGrain = prefs.getBoolean("renderFilmGrain", false)
     val renderTimestamp = prefs.getBoolean("renderTimestamp", true)
+    val saveOriginalPhoto = prefs.getBoolean("saveOriginalPhoto", false)
 
     val exifTimestamp = exif?.getAttribute(ExifInterface.TAG_DATETIME)
     val time = exifTimestamp?.let { date ->
@@ -88,9 +89,15 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     } ?: fallbackRotation
 
     var result = rotateBitmap(bitmap, orientation)
+
+    if (saveOriginalPhoto) {
+      saveBitmapToGallery(context, result)
+    }
+
     result = applyFilter(context, result)
     if (renderFilmGrain) result = addFilmGrain(result)
     if (renderTimestamp) result = addTimestamp(context, result, time)
+
     return saveBitmapToGallery(context, result)
   }
 
