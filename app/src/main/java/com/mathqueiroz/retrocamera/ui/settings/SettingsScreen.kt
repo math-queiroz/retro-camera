@@ -23,6 +23,8 @@ import com.mathqueiroz.retrocamera.ui.component.ScreenHeaderComponent
 
 @Composable
 fun SettingsScreen(navController: NavController) {
+  val context = LocalContext.current
+
   Surface {
     Column (
       modifier = Modifier
@@ -38,19 +40,19 @@ fun SettingsScreen(navController: NavController) {
           .padding(16.dp),
           verticalArrangement = Arrangement.spacedBy(0.dp)
       ) {
-        SettingsButton("About", {}, isFirst = true)
-        SettingsButton("Report a Bug", {}, isLast = true)
+        SettingsButton(getString(context, R.string.settings_about), {}, isFirst = true)
+        SettingsButton(getString(context, R.string.settings_report_bug), {}, isLast = true)
 
-        SettingsButton("Save Original Photo", {}, isFirst = true)
-        SettingsButton("Embed Location", {})
-        SettingsButton("Show Grid", {}, isLast = true)
+        SettingsButton(getString(context, R.string.settings_save_original_photo), {}, isFirst = true)
+        SettingsButton(getString(context, R.string.settings_embed_location), {})
+        SettingsButton(getString(context, R.string.settings_show_grid), {}, isLast = true)
 
-        SettingsButton("Share the App", {}, isFirst = true)
-        SettingsButton("Leave a Review", {})
-        SettingsButton("Contact", {}, isLast = true)
+        SettingsButton(getString(context, R.string.settings_share_app), {}, isFirst = true)
+        SettingsButton(getString(context, R.string.settings_review), {})
+        SettingsButton(getString(context, R.string.settings_contact), {}, isLast = true)
 
-        SettingsButton("Privacy", {}, isFirst = true)
-        SettingsButton("Terms of Use", {}, isLast = true)
+        SettingsButton(getString(context, R.string.settings_privacy), {}, isFirst = true)
+        SettingsButton(getString(context, R.string.settings_terms_of_use), {}, isLast = true)
       }
     }
   }

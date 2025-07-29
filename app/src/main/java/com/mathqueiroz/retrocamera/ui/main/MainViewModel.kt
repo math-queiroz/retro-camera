@@ -56,7 +56,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     _aspectRatio.value = AspectRatio.getNext(_aspectRatio.value)
   }
 
-  fun onTakePhoto(context: Context, bitmap: Bitmap, exif: ExifInterface?): Uri? {
+  fun onTakePhoto(context: Context, bitmap: Bitmap, exif: ExifInterface?, fallbackRotation: Float = 0f): Uri? {
     val renderFilmGrain = prefs.getBoolean("renderFilmGrain", false)
     val renderTimestamp = prefs.getBoolean("renderTimestamp", true)
 
@@ -66,12 +66,18 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         .parse(date)?.time
     } ?: Date().time
 
-    val exifOrientation = exif?.getAttribute(ExifInterface.TAG_ORIENTATION) ?: 0
-    val orientation = when (exifOrientation) {
-      ExifInterface.ORIENTATION_ROTATE_90 -> 90f
-      ExifInterface.ORIENTATION_ROTATE_270 -> 270f
-      else -> 0f
-    }
+    val orientation = exif?.let { exif ->
+      when (exif.getAttributeInt(
+        ExifInterface.TAG_ORIENTATION,
+        ExifInterface.ORIENTATION_NORMAL
+      )) {
+        ExifInterface.ORIENTATION_NORMAL -> 0f
+        ExifInterface.ORIENTATION_ROTATE_90 -> 90f
+        ExifInterface.ORIENTATION_ROTATE_180 -> 180f
+        ExifInterface.ORIENTATION_ROTATE_270 -> 270f
+        else -> 0f
+      }
+    } ?: fallbackRotation
 
     var result = rotateBitmap(bitmap, orientation)
     result = applyFilter(context, result)

@@ -101,7 +101,7 @@ fun MainScreen(
 
         val newRotation = when {
           orientation >= 315 || orientation < 45 -> 0f      // Portrait
-          // orientation >= 135 && orientation < 225 -> 180f   // Portrait upside down
+          orientation >= 135 && orientation < 225 -> 180f   // Portrait upside down
           orientation >= 225 -> 90f   // Landscape left
           else -> 270f // Landscape right
         }
@@ -160,7 +160,6 @@ fun MainScreen(
         }
       }
     }
-
   }
 
   Surface {
@@ -315,9 +314,10 @@ fun MainScreen(
                 aspectRatio = aspectRatio.ratio,
                 onPhotoTaken = { context, bitmap ->
                   isCapturing = false
-                  val uri = (viewModel::onTakePhoto)(context, bitmap, null)
+                  val uri = (viewModel::onTakePhoto)(context, bitmap, null, -deviceRotation)
                   if (uri !== null) navController.navigate(parseUriPreview(uri))
-                }
+                },
+                deviceRotation = deviceRotation
               )
             }
           ) {
@@ -393,7 +393,8 @@ private fun takePhoto(
   context: Context,
   aspectRatio: Float,
   controller: LifecycleCameraController,
-  onPhotoTaken: (Context, Bitmap) -> Unit
+  onPhotoTaken: (Context, Bitmap) -> Unit,
+  deviceRotation: Float
 ) {
   controller.takePicture(
     ContextCompat.getMainExecutor(context),
@@ -401,8 +402,10 @@ private fun takePhoto(
       override fun onCaptureSuccess(image: ImageProxy) {
         super.onCaptureSuccess(image)
 
+        val imageRotation = if (deviceRotation == 180f) { 270f } else { 90f }
+
         val matrix = Matrix().apply {
-          postRotate(image.imageInfo.rotationDegrees.toFloat())
+          postRotate(imageRotation)
         }
 
         val rotatedBitmap = Bitmap.createBitmap(

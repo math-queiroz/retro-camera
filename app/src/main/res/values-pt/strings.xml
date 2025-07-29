@@ -22,4 +22,14 @@
     <string name="permission_request_dismiss">Voltar</string>
     <string name="tip_toggle_film_grain">Alternar Ruído de Filme</string>
     <string name="tip_toggle_timestamp">Alternar Data Impressa</string>
+    <string name="settings_about">Sobre</string>
+    <string name="settings_report_bug">Reportar um Erro</string>
+    <string name="settings_save_original_photo">Salvar Foto Original</string>
+    <string name="settings_embed_location">Incluir Localização</string>
+    <string name="settings_show_grid">Exibir a Grade</string>
+    <string name="settings_share_app">Compartilhar o App</string>
+    <string name="settings_review">Avaliar</string>
+    <string name="settings_contact">Contato</string>
+    <string name="settings_privacy">Privacidade</string>
+    <string name="settings_terms_of_use">Termos de Uso</string>
 </resources>
