@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="app_name">Retro Camera</string>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name" tools:ignore="Typos">Retro Camera</string>
     <string name="cameraroll_no_photos">Nenhuma foto aqui ainda</string>
     <string name="tip_rotate_camera">Alterar Câmera</string>
     <string name="tip_camera_roll">Abrir Rolo da Câmera</string>

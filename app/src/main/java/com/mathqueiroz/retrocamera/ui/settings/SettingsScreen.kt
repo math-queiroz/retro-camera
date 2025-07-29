@@ -214,7 +214,7 @@ private fun getInContact(context: Context) {
 
   try {
     context.startActivity(Intent.createChooser(emailIntent, contactTerm))
-  } catch (e: ActivityNotFoundException) {
+  } catch (_: ActivityNotFoundException) {
     Toast.makeText(
       context,
       context.getString(R.string.warn_no_email_app),
@@ -251,7 +251,7 @@ private fun reportBug(context: Context) {
 
   try {
     context.startActivity(Intent.createChooser(emailIntent, reportTerm))
-  } catch (e: ActivityNotFoundException) {
+  } catch (_: ActivityNotFoundException) {
     Toast.makeText(
       context,
       context.getString(R.string.warn_no_email_app),
