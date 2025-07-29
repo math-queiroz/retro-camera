@@ -34,4 +34,7 @@
     <string name="share_app_subject">Share App</string>
     <string name="share_app_message">Check out this awsome camera app!</string>
     <string name="warn_no_email_app">No email app found</string>
+    <string name="bug_report_describe">Please describe the bug:</string>
+    <string name="bug_report_device">Device</string>
+    <string name="bug_report_version">App Version</string>
 </resources>

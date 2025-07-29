@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.util.Log
 import android.widget.Toast
@@ -61,7 +60,9 @@ fun SettingsScreen(navController: NavController) {
         )
         SettingsButton(
           context.getString(R.string.settings_report_bug),
-          {},
+          {
+            reportBug(context)
+          },
           isLast = true
         )
 
@@ -99,7 +100,9 @@ fun SettingsScreen(navController: NavController) {
         )
         SettingsButton(
           context.getString(R.string.settings_contact),
-          {},
+          {
+            getInContact(context)
+          },
           isLast = true
         )
 
@@ -191,7 +194,7 @@ private fun shareApp(context: Context) {
     type = "text/plain"
     putExtra(Intent.EXTRA_SUBJECT, shareSubject)
     putExtra(Intent.EXTRA_TEXT,
-      shareMessage + "https://play.google.com/store/apps/details?id=${context.packageName}")
+      "$shareMessage https://play.google.com/store/apps/details?id=${context.packageName}")
   }
 
   val chooser = Intent.createChooser(shareIntent, "Share app with friends")
@@ -199,14 +202,16 @@ private fun shareApp(context: Context) {
 }
 
 private fun getInContact(context: Context) {
+  val contactTerm = context.getString(R.string.settings_contact)
+
   val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
     data = "mailto:".toUri()
     putExtra(Intent.EXTRA_EMAIL, arrayOf(AppConstants.CONTACT_MAIL))
-    putExtra(Intent.EXTRA_SUBJECT, "Contact - ${context.getString(R.string.app_name)}")
+    putExtra(Intent.EXTRA_SUBJECT, "$contactTerm - ${context.getString(R.string.app_name)}")
   }
 
   try {
-    context.startActivity(Intent.createChooser(emailIntent, "Send email"))
+    context.startActivity(Intent.createChooser(emailIntent, contactTerm))
   } catch (e: ActivityNotFoundException) {
     Toast.makeText(
       context,
@@ -217,22 +222,28 @@ private fun getInContact(context: Context) {
 }
 
 private fun reportBug(context: Context) {
+  val reportTerm = context.getString(R.string.settings_report_bug)
+  val bugReportDescribe = context.getString(R.string.bug_report_describe)
+  val bugReportDevice = context.getString(R.string.bug_report_device)
+  val bugReportVersion = context.getString(R.string.bug_report_version)
+
+
   val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
     data = "mailto:".toUri()
     putExtra(Intent.EXTRA_EMAIL, arrayOf(AppConstants.SUPPORT_MAIL))
-    putExtra(Intent.EXTRA_SUBJECT, "Bug Report - ${context.getString(R.string.app_name)}")
+    putExtra(Intent.EXTRA_SUBJECT, "$reportTerm - ${context.getString(R.string.app_name)}")
     putExtra(Intent.EXTRA_TEXT, """
-           Please describe the bug:
+           $bugReportDescribe
            
            
-           Device: ${Build.MODEL}
+           $bugReportDevice: ${Build.MODEL}
            Android: ${Build.VERSION.RELEASE}
-           App Version: ${context.packageManager.getPackageInfo(context.packageName, 0).versionName}
+           $bugReportVersion: ${context.packageManager.getPackageInfo(context.packageName, 0).versionName}
        """.trimIndent())
   }
 
   try {
-    context.startActivity(Intent.createChooser(emailIntent, "Report bug"))
+    context.startActivity(Intent.createChooser(emailIntent, reportTerm))
   } catch (e: ActivityNotFoundException) {
     Toast.makeText(
       context,
