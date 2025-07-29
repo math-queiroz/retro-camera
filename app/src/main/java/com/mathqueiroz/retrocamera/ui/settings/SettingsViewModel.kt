@@ -41,14 +41,16 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     _saveOriginalPhoto.value = enabled
   }
 
+  /*
   private val _embedLocation = MutableStateFlow(
-    prefs.getBoolean("embedLocation", false)
+  prefs.getBoolean("embedLocation", false)
   )
   val embedLocation: StateFlow<Boolean> = _embedLocation.asStateFlow()
   fun setEmbedLocation(enabled: Boolean) {
-    prefs.edit { putBoolean("embedLocation", enabled) }
-    _embedLocation.value = enabled
+  prefs.edit { putBoolean("embedLocation", enabled) }
+  _embedLocation.value = enabled
   }
+  */
 
   private val _mirrorFrontCamera = MutableStateFlow(
     prefs.getBoolean("mirrorFrontCamera", false)

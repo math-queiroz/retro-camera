@@ -37,4 +37,5 @@
     <string name="bug_report_describe">Please describe the bug:</string>
     <string name="bug_report_device">Device</string>
     <string name="bug_report_version">App Version</string>
+    <string name="settings_mirror_front_camera">Mirror Front Camera</string>
 </resources>

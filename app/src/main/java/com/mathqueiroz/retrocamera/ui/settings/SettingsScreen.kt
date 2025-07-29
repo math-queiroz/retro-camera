@@ -10,31 +10,46 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.getString
+import androidx.core.net.toUri
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.mathqueiroz.retrocamera.R
 import com.mathqueiroz.retrocamera.Util
 import com.mathqueiroz.retrocamera.ui.component.ScreenHeaderComponent
 import com.mathqueiroz.retrocamera.ui.main.AppConstants
-import androidx.core.net.toUri
 
 @Composable
 fun SettingsScreen(navController: NavController) {
   val context = LocalContext.current
+  val settings = viewModel<SettingsViewModel>()
+
+  val saveOriginalPhoto by settings.saveOriginalPhoto.collectAsStateWithLifecycle()
+  val mirrorFrontCamera by settings.mirrorFrontCamera.collectAsStateWithLifecycle()
+  val showAssistiveGrid by settings.showAssistiveGrid.collectAsStateWithLifecycle()
+
 
   Surface {
     Column (
@@ -68,16 +83,31 @@ fun SettingsScreen(navController: NavController) {
 
         SettingsButton(
           context.getString(R.string.settings_save_original_photo),
-          {},
+          {
+            settings.setSaveOriginalPhoto(!saveOriginalPhoto)
+          },
+          toggleState = saveOriginalPhoto,
           isFirst = true
         )
+        /* TODO: add embed location option
         SettingsButton(
-          context.getString(R.string.settings_embed_location),
-          {}
+        context.getString(R.string.settings_embed_location),
+        {}
+        )
+        */
+        SettingsButton(
+          context.getString(R.string.settings_mirror_front_camera),
+          {
+            settings.setMirrorFrontCamera(!mirrorFrontCamera)
+          },
+          toggleState = mirrorFrontCamera,
         )
         SettingsButton(
           context.getString(R.string.settings_show_grid),
-          {},
+          {
+            settings.setShowAssistiveGrid(!showAssistiveGrid)
+          },
+          toggleState = showAssistiveGrid,
           isLast = true
         )
 
@@ -130,7 +160,8 @@ fun SettingsButton(
   text: String,
   onClick: () -> Unit,
   isFirst: Boolean = false,
-  isLast: Boolean = false
+  isLast: Boolean = false,
+  toggleState: Boolean? = null
 ) {
   val rounding = 26.dp
   val shape = when {
@@ -162,11 +193,31 @@ fun SettingsButton(
             .padding(horizontal = innerPadding)
         )
       }
-      Text(
-        text,
+      Row (
         modifier = Modifier
           .padding(innerPadding)
-      )
+          .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+      ) {
+        Text(text)
+        if (toggleState != null) {
+          Switch(
+            checked = toggleState,
+            modifier = Modifier
+              .padding(end = 8.dp)
+              .scale(0.6f)
+              .size(22.dp),
+            colors = SwitchDefaults.colors(
+              checkedBorderColor = Color.Transparent,
+              uncheckedBorderColor = Color.Transparent
+            ),
+            onCheckedChange = { _ ->
+              onClick()
+            }
+          )
+        }
+      }
     }
   }
 }
