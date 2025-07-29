@@ -30,17 +30,17 @@ fun AppNavigation(navController: NavHostController) {
       CameraRollScreen(navController)
     }
     composable(
+      "preview/{uri}",
+      arguments = listOf(navArgument("uri") { type = NavType.StringType })
+    ) { backStackEntry ->
+      PhotoPreviewScreen(navController, backStackEntry)
+    }
+    composable(
       "settings",
       enterTransition = { slideInHorizontally(initialOffsetX = { it }, animationSpec = tween(200)) },
       exitTransition = { slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(200)) }
     ) {
       SettingsScreen(navController)
-    }
-    composable(
-      "preview/{uri}",
-      arguments = listOf(navArgument("uri") { type = NavType.StringType })
-    ) { backStackEntry ->
-      PhotoPreviewScreen(navController, backStackEntry)
     }
   }
 }
