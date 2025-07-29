@@ -16,8 +16,8 @@ import androidx.compose.runtime.Composable
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.mathqueiroz.retrocamera.R
-import com.mathqueiroz.retrocamera.ui.main.MainActivity
 import com.mathqueiroz.retrocamera.ui.RetroCameraTheme
+import com.mathqueiroz.retrocamera.ui.main.MainActivity
 import kotlin.system.exitProcess
 
 class PermissionsActivity : ComponentActivity() {

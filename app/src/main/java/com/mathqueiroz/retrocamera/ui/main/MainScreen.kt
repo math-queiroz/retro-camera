@@ -8,7 +8,6 @@ import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
-import androidx.exifinterface.media.ExifInterface
 import android.net.Uri
 import android.util.Log
 import android.view.OrientationEventListener
@@ -73,12 +72,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getString
+import androidx.exifinterface.media.ExifInterface
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.mathqueiroz.retrocamera.R
-import com.mathqueiroz.retrocamera.ui.settings.SettingsViewModel
 import com.mathqueiroz.retrocamera.ui.main.component.CameraPreview
+import com.mathqueiroz.retrocamera.ui.settings.SettingsViewModel
 import kotlin.math.min
 
 @SuppressLint("SourceLockedOrientationActivity")
