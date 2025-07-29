@@ -8,11 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
@@ -33,7 +29,7 @@ fun CameraPreview(
   viewModel: MainViewModel
 ) {
   val lifecycleOwner = LocalLifecycleOwner.current
-  val settings = viewModel<SettingsViewModel>();
+  val settings = viewModel<SettingsViewModel>()
 
   val flashTrigger by viewModel.flashTrigger.collectAsStateWithLifecycle()
   val showAssistiveGrid by settings.showAssistiveGrid.collectAsStateWithLifecycle()

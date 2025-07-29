@@ -316,7 +316,7 @@ fun MainScreen(
                   val uri = (viewModel::onTakePhoto)(context, bitmap, null, -deviceRotation)
                   if (uri !== null) navController.navigate(parseUriPreview(uri))
                 },
-                deviceRotation = deviceRotation
+                cameraSelector = cameraSelector
               )
             }
           ) {
@@ -393,7 +393,7 @@ private fun takePhoto(
   aspectRatio: Float,
   controller: LifecycleCameraController,
   onPhotoTaken: (Context, Bitmap) -> Unit,
-  deviceRotation: Float
+  cameraSelector: CameraSelector
 ) {
   controller.takePicture(
     ContextCompat.getMainExecutor(context),
@@ -401,10 +401,10 @@ private fun takePhoto(
       override fun onCaptureSuccess(image: ImageProxy) {
         super.onCaptureSuccess(image)
 
-        val imageRotation = if (deviceRotation == 180f) { 270f } else { 90f }
-
         val matrix = Matrix().apply {
-          postRotate(imageRotation)
+          postRotate(
+            if (cameraSelector == CameraSelector.DEFAULT_FRONT_CAMERA) { -90f }
+            else { 90f })
         }
 
         val rotatedBitmap = Bitmap.createBitmap(
