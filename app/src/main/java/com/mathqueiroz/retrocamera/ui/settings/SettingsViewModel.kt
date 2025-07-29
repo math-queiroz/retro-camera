@@ -9,7 +9,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class SettingsViewModel(application: Application) : AndroidViewModel(application)  {
-  private val prefs = application.applicationContext.getSharedPreferences("app_settings", Context.MODE_PRIVATE)
+  private val prefs = application.applicationContext.getSharedPreferences(
+    "app_settings",
+    Context.MODE_PRIVATE
+  )
 
   private val _renderFilmGrain = MutableStateFlow(
     prefs.getBoolean("renderFilmGrain", false)

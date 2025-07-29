@@ -35,7 +35,10 @@ import java.util.Random
 import kotlin.math.min
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
-  private val prefs = application.applicationContext.getSharedPreferences("app_settings", Context.MODE_PRIVATE)
+  private val prefs = application.applicationContext.getSharedPreferences(
+    "app_settings",
+    Context.MODE_PRIVATE
+  )
 
   private val _flashTrigger = MutableStateFlow(false)
   val flashTrigger: StateFlow<Boolean> = _flashTrigger
@@ -56,7 +59,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     _aspectRatio.value = AspectRatio.getNext(_aspectRatio.value)
   }
 
-  fun onTakePhoto(context: Context, bitmap: Bitmap, exif: ExifInterface?, fallbackRotation: Float = 0f): Uri? {
+  fun onTakePhoto(
+    context: Context,
+    bitmap: Bitmap,
+    exif: ExifInterface?,
+    fallbackRotation: Float = 0f
+  ): Uri? {
     val renderFilmGrain = prefs.getBoolean("renderFilmGrain", false)
     val renderTimestamp = prefs.getBoolean("renderTimestamp", true)
 
@@ -120,7 +128,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     val timestampRect = Rect()
-    paint.getTextBounds(timestampFormat, 0, timestampFormat.length, timestampRect)
+    paint.getTextBounds(
+      timestampFormat,
+      0,
+      timestampFormat.length,
+      timestampRect
+    )
 
     val baseWidth = if (isPortrait) bitmap.height else bitmap.width
     val baseHeight = if (isPortrait) bitmap.width else bitmap.height
@@ -206,7 +219,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     val contentResolver = context.contentResolver
-    val imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+    val imageUri = contentResolver.insert(
+      MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+      contentValues
+    )
 
     imageUri?.let { uri ->
       contentResolver.openOutputStream(uri)?.use { outputStream ->

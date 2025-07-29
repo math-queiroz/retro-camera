@@ -27,8 +27,12 @@ fun AppNavigation(navController: NavHostController) {
     }
     composable(
       "cameraRoll",
-      enterTransition = { slideInVertically(initialOffsetY = { it }, animationSpec = tween(200)) },
-      exitTransition = { slideOutVertically(targetOffsetY = { it }, animationSpec = tween(200)) }
+      enterTransition = {
+        slideInVertically(initialOffsetY = { it }, animationSpec = tween(200))
+      },
+      exitTransition = {
+        slideOutVertically(targetOffsetY = { it }, animationSpec = tween(200))
+      }
     ) {
       CameraRollScreen(navController)
     }
@@ -40,29 +44,45 @@ fun AppNavigation(navController: NavHostController) {
     }
     composable(
       "settings",
-      enterTransition = { slideInHorizontally(initialOffsetX = { it }, animationSpec = tween(200)) },
-      popExitTransition = { slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(200)) }
+      enterTransition = {
+        slideInHorizontally(initialOffsetX = { it }, animationSpec = tween(200))
+      },
+      popExitTransition = {
+        slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(200))
+      }
     ) {
       SettingsScreen(navController)
     }
     composable(
       "settings/about",
-      enterTransition = { slideInHorizontally(initialOffsetX = { it }, animationSpec = tween(200)) },
-      popExitTransition = { slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(200)) }
+      enterTransition = {
+        slideInHorizontally(initialOffsetX = { it }, animationSpec = tween(200))
+      },
+      popExitTransition = {
+        slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(200))
+      }
     ) {
       AboutSettingsScreen(navController)
     }
     composable(
       "settings/privacy",
-      enterTransition = { slideInHorizontally(initialOffsetX = { it }, animationSpec = tween(200)) },
-      popExitTransition = { slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(200)) }
+      enterTransition = {
+        slideInHorizontally(initialOffsetX = { it }, animationSpec = tween(200))
+      },
+      popExitTransition = {
+        slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(200))
+      }
     ) {
       PrivacySettingsScreen(navController)
     }
     composable(
       "settings/terms_of_use",
-      enterTransition = { slideInHorizontally(initialOffsetX = { it }, animationSpec = tween(200)) },
-      popExitTransition = { slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(200)) }
+      enterTransition = {
+        slideInHorizontally(initialOffsetX = { it }, animationSpec = tween(200))
+      },
+      popExitTransition = {
+        slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(200))
+      }
     ) {
       TermsSettingsScreen(navController)
     }

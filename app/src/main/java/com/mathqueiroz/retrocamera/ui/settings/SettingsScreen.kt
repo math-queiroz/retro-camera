@@ -207,7 +207,9 @@ private fun getInContact(context: Context) {
   val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
     data = "mailto:".toUri()
     putExtra(Intent.EXTRA_EMAIL, arrayOf(AppConstants.CONTACT_MAIL))
-    putExtra(Intent.EXTRA_SUBJECT, "$contactTerm - ${context.getString(R.string.app_name)}")
+    putExtra(Intent.EXTRA_SUBJECT,
+      "$contactTerm - ${context.getString(R.string.app_name)}"
+    )
   }
 
   try {
@@ -231,14 +233,19 @@ private fun reportBug(context: Context) {
   val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
     data = "mailto:".toUri()
     putExtra(Intent.EXTRA_EMAIL, arrayOf(AppConstants.SUPPORT_MAIL))
-    putExtra(Intent.EXTRA_SUBJECT, "$reportTerm - ${context.getString(R.string.app_name)}")
+    putExtra(Intent.EXTRA_SUBJECT,
+      "$reportTerm - ${context.getString(R.string.app_name)}"
+    )
     putExtra(Intent.EXTRA_TEXT, """
            $bugReportDescribe
            
            
            $bugReportDevice: ${Build.MODEL}
            Android: ${Build.VERSION.RELEASE}
-           $bugReportVersion: ${context.packageManager.getPackageInfo(context.packageName, 0).versionName}
+           $bugReportVersion: ${
+             context.packageManager.getPackageInfo(context.packageName, 0)
+               .versionName
+           }
        """.trimIndent())
   }
 

@@ -44,7 +44,10 @@ class PermissionsActivity : ComponentActivity() {
 
   private fun checkAndRequestPermissions() {
     val missingPermissions = CAMERAX_PERMISSIONS.filter {
-      ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
+      ContextCompat.checkSelfPermission(
+        this,
+        it
+      ) != PackageManager.PERMISSION_GRANTED
     }
 
     if (missingPermissions.isEmpty()) {
@@ -74,7 +77,11 @@ class PermissionsActivity : ComponentActivity() {
         onDismiss = { exitProcess(0) },
         onGoToSettings = {
           val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-            data = Uri.fromParts("package", applicationContext.packageName, null)
+            data = Uri.fromParts(
+              "package",
+              applicationContext.packageName,
+              null
+            )
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
           }
           this.startActivity(intent)

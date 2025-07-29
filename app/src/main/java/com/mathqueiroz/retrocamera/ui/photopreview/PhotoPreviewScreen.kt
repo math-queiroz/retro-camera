@@ -79,7 +79,10 @@ fun PhotoPreviewScreen(
             modifier = Modifier
               .padding(16.dp)
           ) {
-            Icon(Icons.Default.IosShare, contentDescription = context.getString(R.string.tip_delete))
+            Icon(
+              Icons.Default.IosShare,
+              contentDescription = context.getString(R.string.tip_delete)
+            )
           }
 
           IconButton(
@@ -90,7 +93,10 @@ fun PhotoPreviewScreen(
             modifier = Modifier
               .padding(16.dp)
           ) {
-            Icon(Icons.Default.Delete, contentDescription = context.getString(R.string.tip_delete))
+            Icon(
+              Icons.Default.Delete,
+              contentDescription = context.getString(R.string.tip_delete)
+            )
           }
         }
       }
