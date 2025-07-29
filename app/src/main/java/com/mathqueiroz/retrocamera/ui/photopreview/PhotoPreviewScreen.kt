@@ -60,7 +60,7 @@ fun PhotoPreviewScreen(
         ) {
           Icon(
             imageVector = Icons.Default.ArrowBack,
-            contentDescription = getString(context, R.string.tip_back)
+            contentDescription = context.getString(R.string.tip_back)
           )
         }
 
@@ -79,7 +79,7 @@ fun PhotoPreviewScreen(
             modifier = Modifier
               .padding(16.dp)
           ) {
-            Icon(Icons.Default.IosShare, contentDescription = getString(context, R.string.tip_delete))
+            Icon(Icons.Default.IosShare, contentDescription = context.getString(R.string.tip_delete))
           }
 
           IconButton(
@@ -90,7 +90,7 @@ fun PhotoPreviewScreen(
             modifier = Modifier
               .padding(16.dp)
           ) {
-            Icon(Icons.Default.Delete, contentDescription = getString(context, R.string.tip_delete))
+            Icon(Icons.Default.Delete, contentDescription = context.getString(R.string.tip_delete))
           }
         }
       }
@@ -114,5 +114,8 @@ private fun shareImage(context: Context, uri: Uri) {
     addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
   }
   shareIntent.type = "image/*"
-  context.startActivity(Intent.createChooser(shareIntent, getString(context, R.string.tip_share)))
+  context.startActivity(Intent.createChooser(
+    shareIntent,
+    context.getString(R.string.tip_share)
+  ))
 }

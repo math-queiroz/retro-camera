@@ -42,4 +42,6 @@ class MainActivity : ComponentActivity() {
 
 object AppConstants {
   const val MEDIA_ALBUM_NAME = "Retro_Camera"
+  const val CONTACT_MAIL = "retrocameraapp.proton.me"
+  const val SUPPORT_MAIL = "retrocameraapp.proton.me"
 }

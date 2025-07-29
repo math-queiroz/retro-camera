@@ -59,6 +59,7 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material-icons-extended:1.5.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
+    implementation("com.google.android.play:review:2.0.1")
     implementation(libs.androidx.navigation.compose.android)
     implementation(libs.androidx.exifinterface)
     testImplementation("junit:junit:4.13.2")

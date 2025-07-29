@@ -1,9 +1,7 @@
 package com.mathqueiroz.retrocamera.ui.main
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
-import android.content.ContextWrapper
 import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -77,6 +75,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.mathqueiroz.retrocamera.R
+import com.mathqueiroz.retrocamera.Util
 import com.mathqueiroz.retrocamera.ui.main.component.CameraPreview
 import com.mathqueiroz.retrocamera.ui.settings.SettingsViewModel
 import kotlin.math.min
@@ -90,7 +89,7 @@ fun MainScreen(
   val viewModel = viewModel<MainViewModel>()
   val settings = viewModel<SettingsViewModel>()
 
-  val activity = context.findActivity()
+  val activity = Util.findActivity(context)
   activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
   var deviceRotation by remember { mutableFloatStateOf(0f) }
@@ -136,9 +135,9 @@ fun MainScreen(
 
   val flashState by viewModel.flashState.collectAsStateWithLifecycle()
   val (flashIcon, flashDescription) = when (flashState) {
-    ImageCapture.FLASH_MODE_OFF -> Icons.Default.FlashOff to getString(context, R.string.tip_flash_on)
-    ImageCapture.FLASH_MODE_ON -> Icons.Default.FlashOn to getString(context, R.string.tip_flash_off)
-    else -> Icons.Default.FlashAuto to getString(context, R.string.tip_flash_on)
+    ImageCapture.FLASH_MODE_OFF -> Icons.Default.FlashOff to context.getString(R.string.tip_flash_on)
+    ImageCapture.FLASH_MODE_ON -> Icons.Default.FlashOn to context.getString(R.string.tip_flash_off)
+    else -> Icons.Default.FlashAuto to context.getString(R.string.tip_flash_on)
   }
   LaunchedEffect(flashState) {
     controller.imageCaptureFlashMode = flashState
@@ -223,7 +222,7 @@ fun MainScreen(
         ) {
           RotatingIconButton(
             icon = Icons.Default.AddPhotoAlternate,
-            description = getString(context, R.string.term_import_photos),
+            description = context.getString(R.string.term_import_photos),
             rotation = deviceRotation,
             enabled = !isCapturing,
             onClick = {
@@ -289,7 +288,7 @@ fun MainScreen(
         ) {
           RotatingIconButton(
             icon = Icons.Default.CameraRoll,
-            description = getString(context, R.string.tip_camera_roll),
+            description = context.getString(R.string.tip_camera_roll),
             rotation = deviceRotation,
             enabled = !isCapturing,
             modifier = Modifier
@@ -323,7 +322,7 @@ fun MainScreen(
           ) {
             Icon(
               imageVector = Icons.Default.Circle,
-              contentDescription = getString(context, R.string.tip_take_photo),
+              contentDescription = context.getString(R.string.tip_take_photo),
               modifier = Modifier
                 .fillMaxSize(),
             )
@@ -461,10 +460,4 @@ private fun getBitmapFromUri(context: Context, uri: Uri): Pair<Bitmap?, ExifInte
 
 fun parseUriPreview(uri: Uri): String {
   return "preview/${Uri.encode(uri.toString())}"
-}
-
-fun Context.findActivity(): Activity? = when (this) {
-  is Activity -> this
-  is ContextWrapper -> baseContext.findActivity()
-  else -> null
 }

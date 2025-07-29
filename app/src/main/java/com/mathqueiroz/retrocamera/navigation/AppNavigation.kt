@@ -15,6 +15,9 @@ import com.mathqueiroz.retrocamera.ui.cameraroll.CameraRollScreen
 import com.mathqueiroz.retrocamera.ui.main.MainScreen
 import com.mathqueiroz.retrocamera.ui.photopreview.PhotoPreviewScreen
 import com.mathqueiroz.retrocamera.ui.settings.SettingsScreen
+import com.mathqueiroz.retrocamera.ui.settings.items.AboutSettingsScreen
+import com.mathqueiroz.retrocamera.ui.settings.items.PrivacySettingsScreen
+import com.mathqueiroz.retrocamera.ui.settings.items.TermsSettingsScreen
 
 @Composable
 fun AppNavigation(navController: NavHostController) {
@@ -38,9 +41,30 @@ fun AppNavigation(navController: NavHostController) {
     composable(
       "settings",
       enterTransition = { slideInHorizontally(initialOffsetX = { it }, animationSpec = tween(200)) },
-      exitTransition = { slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(200)) }
+      popExitTransition = { slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(200)) }
     ) {
       SettingsScreen(navController)
+    }
+    composable(
+      "settings/about",
+      enterTransition = { slideInHorizontally(initialOffsetX = { it }, animationSpec = tween(200)) },
+      popExitTransition = { slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(200)) }
+    ) {
+      AboutSettingsScreen(navController)
+    }
+    composable(
+      "settings/privacy",
+      enterTransition = { slideInHorizontally(initialOffsetX = { it }, animationSpec = tween(200)) },
+      popExitTransition = { slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(200)) }
+    ) {
+      PrivacySettingsScreen(navController)
+    }
+    composable(
+      "settings/terms_of_use",
+      enterTransition = { slideInHorizontally(initialOffsetX = { it }, animationSpec = tween(200)) },
+      popExitTransition = { slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(200)) }
+    ) {
+      TermsSettingsScreen(navController)
     }
   }
 }
