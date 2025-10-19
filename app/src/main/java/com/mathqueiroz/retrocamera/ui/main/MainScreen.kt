@@ -72,7 +72,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getString
 import androidx.exifinterface.media.ExifInterface
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.mathqueiroz.retrocamera.R
 import com.mathqueiroz.retrocamera.Util
@@ -83,13 +82,11 @@ import kotlin.math.min
 @SuppressLint("SourceLockedOrientationActivity")
 @Composable
 fun MainScreen(
-  navController: NavController
+  navController: NavController,
+  viewModel: MainViewModel,
+  settings: SettingsViewModel
 ) {
   val context = LocalContext.current
-  val viewModel = viewModel<MainViewModel>()
-  val settings = viewModel<SettingsViewModel>()
-
-  val showAssistiveGrid by settings.showAssistiveGrid.collectAsStateWithLifecycle()
 
   val activity = Util.findActivity(context)
   activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -174,10 +171,11 @@ fun MainScreen(
     ) {
       CameraPreview(
         controller = controller,
-        showAssistiveGrid = showAssistiveGrid,
+        viewModel = viewModel,
+        settings = settings,
         modifier = Modifier
           .align(alignment = Alignment.Center)
-          .aspectRatio(aspectRatio.ratio)
+          .aspectRatio(aspectRatio.ratio),
       )
     }
 

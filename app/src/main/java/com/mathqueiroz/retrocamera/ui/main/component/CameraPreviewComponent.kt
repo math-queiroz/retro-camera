@@ -1,5 +1,6 @@
 package com.mathqueiroz.retrocamera.ui.main.component
 
+import android.util.Log
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Canvas
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -17,19 +19,24 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mathqueiroz.retrocamera.ui.main.MainViewModel
+import com.mathqueiroz.retrocamera.ui.settings.SettingsViewModel
 
 @Composable
 fun CameraPreview(
   controller: LifecycleCameraController,
   modifier: Modifier,
-  showAssistiveGrid: Boolean
+  viewModel: MainViewModel,
+  settings: SettingsViewModel
 ) {
   val lifecycleOwner = LocalLifecycleOwner.current
-  val viewModel = viewModel<MainViewModel>()
 
   val flashTrigger by viewModel.flashTrigger.collectAsStateWithLifecycle()
+  val showAssistiveGrid by settings.showAssistiveGrid.collectAsStateWithLifecycle()
+
+  LaunchedEffect(showAssistiveGrid) {
+    Log.d("CameraPreview", "showAssistiveGrid changed to: $showAssistiveGrid")
+  }
 
   Box(
     modifier = modifier
@@ -43,9 +50,12 @@ fun CameraPreview(
           controller.bindToLifecycle(lifecycleOwner)
         }
       },
+      update = { view ->
+        view.invalidate()
+      },
       modifier = modifier
         .fillMaxWidth()
-        .clip(RectangleShape)
+        .clip(RectangleShape),
     )
 
     BlackFlashEffect(

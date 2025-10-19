@@ -39,4 +39,6 @@
     <string name="bug_report_device">Dispositivo</string>
     <string name="bug_report_version">Versão do App</string>
     <string name="settings_mirror_front_camera">Espelhar Câmera Frontal</string>
+    <string name="settings_privacy_url">https://math-queiroz.github.io/retro-camera/privacy-notice</string>
+    <string name="settings_terms_of_use_url">https://math-queiroz.github.io/retro-camera/terms-and-conditions</string>
 </resources>

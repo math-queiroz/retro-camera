@@ -33,7 +33,6 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.getString
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.mathqueiroz.retrocamera.R
@@ -42,14 +41,15 @@ import com.mathqueiroz.retrocamera.ui.component.ScreenHeaderComponent
 import com.mathqueiroz.retrocamera.ui.main.AppConstants
 
 @Composable
-fun SettingsScreen(navController: NavController) {
+fun SettingsScreen(
+  navController: NavController,
+  settings: SettingsViewModel
+) {
   val context = LocalContext.current
-  val settings = viewModel<SettingsViewModel>()
 
   val saveOriginalPhoto by settings.saveOriginalPhoto.collectAsStateWithLifecycle()
   val mirrorFrontCamera by settings.mirrorFrontCamera.collectAsStateWithLifecycle()
   val showAssistiveGrid by settings.showAssistiveGrid.collectAsStateWithLifecycle()
-
 
   Surface {
     Column (
@@ -135,18 +135,17 @@ fun SettingsScreen(navController: NavController) {
           },
           isLast = true
         )
-
         SettingsButton(
           context.getString(R.string.settings_privacy),
           {
-            navController.navigate("settings/privacy")
+            openUrl(context, context.getString(R.string.settings_privacy_url))
           },
           isFirst = true
         )
         SettingsButton(
           context.getString(R.string.settings_terms_of_use),
           {
-            navController.navigate("settings/terms_of_use")
+            openUrl(context, context.getString(R.string.settings_terms_of_use_url))
           },
           isLast = true
         )
@@ -209,6 +208,8 @@ fun SettingsButton(
               .scale(0.6f)
               .size(22.dp),
             colors = SwitchDefaults.colors(
+              checkedThumbColor = Color.White,
+              checkedTrackColor = Color.Gray,
               checkedBorderColor = Color.Transparent,
               uncheckedBorderColor = Color.Transparent
             ),
@@ -250,6 +251,11 @@ private fun shareApp(context: Context) {
 
   val chooser = Intent.createChooser(shareIntent, "Share app with friends")
   context.startActivity(chooser)
+}
+
+private fun openUrl(context: Context, url: String) {
+  val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+  context.startActivity(intent)
 }
 
 private fun getInContact(context: Context) {

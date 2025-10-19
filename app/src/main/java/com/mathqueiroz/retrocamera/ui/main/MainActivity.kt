@@ -13,6 +13,11 @@ import com.mathqueiroz.retrocamera.ui.RetroCameraTheme
 import com.mathqueiroz.retrocamera.ui.permissions.PermissionsActivity
 import com.mathqueiroz.retrocamera.ui.permissions.PermissionsActivity.Companion.CAMERAX_PERMISSIONS
 
+//import com.google.android.gms.ads.MobileAds
+//import com.google.android.gms.ads.initialization.InitializationStatus
+//import com.google.android.gms.ads.initialization.OnInitializationCompleteListener
+//import com.mathqueiroz.retrocamera.BuildConfig
+
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)

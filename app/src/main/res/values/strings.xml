@@ -38,4 +38,6 @@
     <string name="bug_report_device">Device</string>
     <string name="bug_report_version">App Version</string>
     <string name="settings_mirror_front_camera">Mirror Front Camera</string>
+    <string name="settings_privacy_url">https://math-queiroz.github.io/retro-camera/privacy-notice</string>
+    <string name="settings_terms_of_use_url">https://math-queiroz.github.io/retro-camera/terms-and-conditions</string>
 </resources>

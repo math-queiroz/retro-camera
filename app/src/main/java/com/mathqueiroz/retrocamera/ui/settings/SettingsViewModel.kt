@@ -2,6 +2,7 @@ package com.mathqueiroz.retrocamera.ui.settings
 
 import android.app.Application
 import android.content.Context
+import android.util.Log
 import androidx.core.content.edit
 import androidx.lifecycle.AndroidViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -53,7 +54,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
   */
 
   private val _mirrorFrontCamera = MutableStateFlow(
-    prefs.getBoolean("mirrorFrontCamera", false)
+    prefs.getBoolean("mirrorFrontCamera", true)
   )
   val mirrorFrontCamera: StateFlow<Boolean> = _mirrorFrontCamera.asStateFlow()
   fun setMirrorFrontCamera(enabled: Boolean) {
@@ -62,10 +63,11 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
   }
 
   private val _showAssistiveGrid = MutableStateFlow(
-    prefs.getBoolean("showAssistiveGrid", false)
+    prefs.getBoolean("showAssistiveGrid", true)
   )
   val showAssistiveGrid: StateFlow<Boolean> = _showAssistiveGrid.asStateFlow()
   fun setShowAssistiveGrid(enabled: Boolean) {
+    Log.i("CameraPreview", "Setting value as $enabled")
     prefs.edit { putBoolean("showAssistiveGrid", enabled) }
     _showAssistiveGrid.value = enabled
   }
